@@ -74,4 +74,23 @@ public class EmployeeController {
 
         return ResponseEntity.ok(updatedEmployee);
     }
+
+    // DELETE employee
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Void> deleteEmployee(
+            @PathVariable("id") Long employeeId) {
+
+        Employee employee = employeeRepository
+                .findById(employeeId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Employee not found: " + employeeId
+                        )
+                );
+
+        employeeRepository.delete(employee);
+
+        return ResponseEntity.noContent().build();
+    }
 }
