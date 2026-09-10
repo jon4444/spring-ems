@@ -1,5 +1,6 @@
 package org.springframework.boot.ems.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.boot.ems.dto.UserRegistrationRequest;
 import org.springframework.boot.ems.dto.UserResponse;
 import org.springframework.boot.ems.service.UserService;
@@ -38,7 +39,7 @@ public class UserController {
     // REGISTER user
     @PostMapping("/users/register")
     public ResponseEntity<UserResponse> registerUser(
-            @RequestBody UserRegistrationRequest request) {
+           @Valid @RequestBody UserRegistrationRequest request) {
 
         UserResponse savedUser =
                 userService.registerUser(request);
