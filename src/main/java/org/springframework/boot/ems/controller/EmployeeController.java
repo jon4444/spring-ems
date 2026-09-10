@@ -1,95 +1,66 @@
 package org.springframework.boot.ems.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ems.entity.Employee;
-import org.springframework.boot.ems.repository.EmployeeRepository;
+import org.springframework.boot.ems.dto.EmployeeRequest;
+import org.springframework.boot.ems.dto.EmployeeResponse;
+import org.springframework.boot.ems.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
-    // GET all employees
     @GetMapping("/employees")
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponse> getAllEmployees() {
+        return employeeService.getAllEmployees();
     }
 
-
-    // GET employee by ID
     @GetMapping("/employees/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long employeeId) {
+    public ResponseEntity<EmployeeResponse> getEmployeeById(
+            @PathVariable("id") Long employeeId) {
 
-        Employee employee = employeeRepository
-                .findById(employeeId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Employee not found: " + employeeId
-                        )
-                );
-
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok(
+                employeeService.getEmployeeById(employeeId)
+        );
     }
 
-
-    // CREATE employee
     @PostMapping("/employees")
-    public Employee createEmployee(
-            @Valid @RequestBody Employee employee) {
+    public ResponseEntity<EmployeeResponse> createEmployee(
+            @Valid @RequestBody EmployeeRequest request) {
 
-        return employeeRepository.save(employee);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(employeeService.createEmployee(request));
     }
 
-
-    // UPDATE employee
     @PutMapping("/employees/{id}")
-    public ResponseEntity<Employee> updateEmployee(
+    public ResponseEntity<EmployeeResponse> updateEmployee(
             @PathVariable("id") Long employeeId,
-            @Valid @RequestBody Employee employeeDetails ) {
+            @Valid @RequestBody EmployeeRequest request) {
 
-        Employee employee = employeeRepository
-                .findById(employeeId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Employee not found: " + employeeId
-                        )
-                );
-
-        employee.setFirstname(employeeDetails.getFirstname());
-        employee.setLastname(employeeDetails.getLastname());
-        employee.setEmail(employeeDetails.getEmail());
-
-        Employee updatedEmployee = employeeRepository.save(employee);
-
-        return ResponseEntity.ok(updatedEmployee);
+        return ResponseEntity.ok(
+                employeeService.updateEmployee(
+                        employeeId,
+                        request
+                )
+        );
     }
 
-    // DELETE employee
     @DeleteMapping("/employees/{id}")
     public ResponseEntity<Void> deleteEmployee(
             @PathVariable("id") Long employeeId) {
 
-        Employee employee = employeeRepository
-                .findById(employeeId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Employee not found: " + employeeId
-                        )
-                );
-
-        employeeRepository.delete(employee);
+        employeeService.deleteEmployee(employeeId);
 
         return ResponseEntity.noContent().build();
     }
