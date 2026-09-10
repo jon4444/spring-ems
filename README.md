@@ -1,14 +1,16 @@
 URLs:
 
-get all employees```http://localhost:8080/api/v1/employees```
-get one employee ```http://localhost:8080/api/v1/employees/{id}```
-get all users ```http://localhost:8080/api/v1/users```
-get one user ```http://localhost:8080/api/v1/users/{id}```
+GET all employees```http://localhost:8080/api/v1/employees```
+GET one employee ```http://localhost:8080/api/v1/employees/{id}```
+GET all users ```http://localhost:8080/api/v1/users```
+GET one user ```http://localhost:8080/api/v1/users/{id}```
 
 Headers:
+
 ```Content-Type: application/json```
 
 Body → raw/pretty → JSON:
+
 ```
 {
     "firstname": "John",
@@ -46,7 +48,7 @@ Body → raw/pretty → JSON:
 │
 ▼
 ┌─────────────────────────────┐
-│        REPOSITORY            │
+│        REPOSITORY           │
 └──────────────┬──────────────┘
 │
 ▼
